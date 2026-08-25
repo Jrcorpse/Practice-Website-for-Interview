@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Global Dominion - Loan Application</title>
+  
+  <!-- Supabase JS Library via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      background-color: #f1f5f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background: #ffffff;
+      padding: 32px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+      width: 100%;
+      max-width: 420px;
+    }
+    h2 {
+      margin: 0 0 8px 0;
+      color: #0f172a;
+      font-size: 22px;
+    }
+    p.subtitle {
+      margin: 0 0 24px 0;
+      color: #64748b;
+      font-size: 14px;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: #334155;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+    input:focus {
+      border-color: #2563eb;
+      outline: none;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    button:hover {
+      background-color: #1d4ed8;
+    }
+    button:disabled {
+      background-color: #94a3b8;
+      cursor: not-allowed;
+    }
+    #statusMessage {
+      margin-top: 16px;
+      font-size: 14px;
+      text-align: center;
+      font-weight: 500;
+    }
+    .success { color: #16a34a; }
+    .error { color: #dc2626; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>Loan Application</h2>
+    <p class="subtitle">Fill out the details below to submit your request.</p>
+
+    <form id="loanForm">
+      <div class="form-group">
+        <label for="applicant_name">Full Name</label>
+        <input type="text" id="applicant_name" placeholder="e.g. Jay Batumbakal" required />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" placeholder="e.g. batumbakal@gmail.com" required />
+      </div>
+
+      <div class="form-group">
+        <label for="amount">Loan Amount (PHP)</label>
+        <input type="number" id="amount" placeholder="e.g. 50000" min="1000" required />
+      </div>
+
+      <button type="submit" id="submitBtn">Submit Application</button>
+    </form>
+
+    <div id="statusMessage"></div>
+  </div>
+
+<script>
+  // 1. SUPABASE CONFIGURATION
+  const SUPABASE_URL = 'https://hrvwfaefmreioyvnfhnb.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhydndmYWVmbXJlaW95dm5maG5iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc2NjgyMTMsImV4cCI6MjEwMzI0NDIxM30.U9apdbYlJoNhfPcMJIhhEAwK4vpQjdFaQ0-DhWC7Ke0';
+
+  // Gumamit ng 'db' o 'supabaseClient' para iwas conflict sa global window.supabase object
+  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // 2. DOM ELEMENTS SELECTION
+  const loanForm = document.getElementById('loanForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const statusMessage = document.getElementById('statusMessage');
+
+  // 3. FORM SUBMISSION EVENT
+  loanForm.addEventListener('submit', async (e) => {
+    e.preventDefault(); // Pinipigilan ang browser page reload
+
+    submitBtn.disabled = true;
+    submitBtn.innerText = 'Submitting...';
+    statusMessage.innerText = '';
+
+    // Kunin ang values mula sa input fields
+    const applicant_name = document.getElementById('applicant_name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const amount = parseFloat(document.getElementById('amount').value);
+
+    try {
+      // DITO ANG NAPALITAN: 'db.from' na ang ginagamit natin imbes na 'supabase.from'
+      const { data, error } = await db
+        .from('loans')
+        .insert([{ applicant_name, email, amount }]);
+
+      if (error) throw error;
+
+      statusMessage.className = 'success';
+      statusMessage.innerText = 'Application submitted successfully!';
+      loanForm.reset();
+
+    } catch (err) {
+      statusMessage.className = 'error';
+      statusMessage.innerText = 'Submission failed: ' + err.message;
+      console.error('Supabase Error:', err);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.innerText = 'Submit Application';
+    }
+  });
+</script>
+</body>
+</html>
