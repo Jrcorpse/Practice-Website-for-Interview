@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>James Ernest Crisostomo | Web Developer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-blue: #0ea5e9; 
+            --dark-card-bg: #0b1121; 
+            --page-bg-gradient: linear-gradient(135deg, #0f172a 0%, #0284c7 100%); 
+            --text-white: #f8fafc;
+            --text-gray: #94a3b8;
+            --name-gradient: linear-gradient(90deg, #38bdf8, #818cf8);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--page-bg-gradient);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-white);
+        }
+
+        /* --- THE MAIN WRAPPER --- */
+        .portfolio-container {
+            width: 90%;
+            max-width: 1200px;
+            height: 85vh;
+            background-color: var(--dark-card-bg);
+            border-radius: 30px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            
+            /* LOOK HERE: This creates the thicker border and the outer glow effect */
+            border: 4px solid rgba(14, 165, 233, 0.3); /* The wider blue border */
+            box-shadow: 0 0 40px rgba(14, 165, 233, 0.4), /* The cyan glow */
+                        0 25px 50px -12px rgba(0, 0, 0, 0.5); /* The dark drop shadow */
+        }
+
+        /* --- HEADER / NAVIGATION --- */
+        header {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 70px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            text-decoration: none;
+            color: var(--text-white);
+        }
+
+        .logo span {
+            color: var(--primary-blue);
+        }
+
+        nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-link {
+            color: var(--text-white);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary-blue);
+        }
+
+        /* --- HERO SECTION (Two-Column Layout) --- */
+        .hero {
+            position: relative;
+            z-index: 2;
+            flex: 1; 
+            display: flex;
+            
+            /* LOOK HERE: 'row' puts the text box and the image box side-by-side */
+            flex-direction: row; 
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 50px;
+        }
+
+        /* Left Column: Text and Buttons */
+        .hero-content {
+            max-width: 450px;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            margin: 0;
+            line-height: 1.1;
+            letter-spacing: -1px;
+        }
+
+        .name-highlight {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--name-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero h2 {
+            font-size: 1.8rem;
+            color: var(--primary-blue);
+            margin: 10px 0 20px 0;
+            font-weight: 700;
+        }
+
+        .hero p {
+            color: var(--text-gray);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 40px;
+            max-width: 400px;
+        }
+
+        /* Right Column: The Profile Picture */
+        .hero-image {
+            /* LOOK HERE: This box holds your image. It takes up the right side. */
+            flex: 1;
+            display: flex;
+            justify-content: flex-end; /* Pushes the image to the far right */
+            align-items: flex-end;
+            height: 50%;
+        }
+
+        .hero-image img {
+            /* LOOK HERE: Styles for 'james no bg.png'. Adjust max-width to make it bigger/smaller */
+            max-width: 110%; 
+            max-height: 150vh; /* Prevents it from breaking out of the top/bottom */
+            object-fit: contain;
+            align-items: center;
+            filter: drop-shadow(-10px 10px 20px rgba(0,0,0,0.5)); /* Adds a shadow directly to you */
+        }
+
+        /* --- BUTTONS --- */
+        .button-group {
+            display: flex;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: #fff;
+            border: 2px solid var(--primary-blue);
+        }
+
+        .btn-primary:hover {
+            background-color: transparent;
+            color: var(--primary-blue);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-white);
+            border: 2px solid var(--text-gray);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+
+        /* --- BOTTOM SOCIALS --- */
+        .socials {
+            position: absolute;
+            bottom: 40px;
+            left: 60px;
+            z-index: 2;
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--text-gray);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-gray);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-icon:hover {
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="portfolio-container">
+        
+        <header>
+            <a href="#" class="logo">James<span>.</span></a>
+            <nav>
+                <a href="#" class="nav-link active">Home</a>
+                <a href="#" class="nav-link">About</a>
+                <a href="#" class="nav-link">Services</a>
+                <a href="#" class="nav-link">Portfolio</a>
+                <a href="#" class="nav-link">Contact</a>
+            </nav>
+        </header>
+
+        <main class="hero">
+            
+            <!-- Left Side: Text Box -->
+            <div class="hero-content">
+                <h1>Hi, I'm <br><span class="name-highlight">James Ernest Crisostomo</span></h1>
+                <h2>Web Developer</h2>
+                <p>
+                    Specializing in creating efficient, user-friendly applications. Experienced in computer vision, robotics, and developing robust platforms like the Swine ASF Detection System.
+                </p>
+                
+                <div class="button-group">
+                    <a href="#" class="btn btn-primary">Hire Me</a>
+                    <a href="#" class="btn btn-secondary">Let's Talk</a>
+                </div>
+            </div>
+
+            <!-- Right Side: Image Box -->
+            <div class="hero-image">
+                <!-- Ensure your image file is in the same folder as this HTML file -->
+                <img src="james no bg.png" alt="James Ernest Crisostomo">
+            </div>
+
+        </main>
+
+        <div class="socials">
+            <a href="#" class="social-icon">f</a>
+            <a href="#" class="social-icon">t</a>
+            <a href="#" class="social-icon">in</a>
+        </div>
+
+    </div>
+
+</body>
+</html>

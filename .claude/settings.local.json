@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p \"C:/Users/james/OneDrive/Desktop/James Code/pc-monitor/public/vendor\" \"C:/Users/james/OneDrive/Desktop/James Code/pc-monitor/scripts\")",
+      "Bash(npm init *)",
+      "Bash(npm install *)",
+      "Bash(node -e \"console.log\\('si:', require\\('systeminformation/package.json'\\).version, '| ws:', require\\('ws/package.json'\\).version, '| qrcode:', require\\('qrcode/package.json'\\).version\\)\")",
+      "Bash(npx esbuild *)",
+      "Bash(cp node_modules/chart.js/dist/chart.umd.js public/vendor/chart.umd.js)",
+      "Bash(node server.js --no-open)",
+      "Bash(curl -s http://localhost:8356/api/info)",
+      "Bash(curl -s http://localhost:8356/api/stats)",
+      "Bash(curl -s \"http://localhost:8356/api/processes\")",
+      "Bash(curl -s --max-time 40 \"http://localhost:8356/api/apps\")"
+    ]
+  }
+}

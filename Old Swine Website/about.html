@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>About Us | SADS Team</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-purple: #8a388a;
+            --bg-light: #f8f9fa;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* --- NAVIGATION --- */
+        .main-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 4rem;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo { display: flex; align-items: center; gap: 8px; }
+        .logo-text { font-weight: 800; color: var(--primary-purple); font-size: 1.2rem; }
+
+        .nav-home-btn {
+            display: flex;
+            align-items: center;
+            padding: 8px 18px;
+            border-radius: 25px;
+            background: rgba(138, 56, 138, 0.08);
+            color: var(--primary-purple) !important;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: 0.3s;
+            margin-left: 15px;
+        }
+
+        /* --- DESKTOP HEADER --- */
+        .about-header {
+            text-align: center;
+            padding: 80px 20px;
+            background: #8a388a; /* Matches your screenshot color */
+            color: white;
+        }
+
+        .about-header h1 { font-size: 3rem; margin: 15px 0; }
+        .status-badge-mini { background: rgba(255,255,255,0.15); padding: 5px 15px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
+
+        /* --- TEAM GRID --- */
+        .team-container { padding: 40px 20px; max-width: 1200px; margin: 0 auto; }
+        .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; }
+        .team-card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; padding-bottom: 20px; }
+        .image-wrapper { height: 280px; overflow: hidden; background: #eee; }
+        .image-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        .member-detail h3 { margin: 15px 0 5px; font-size: 1.1rem; color: #2d3436; }
+        .member-detail .role { color: var(--primary-purple); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; }
+
+        /* --- MOBILE REFINEMENTS (The Fix) --- */
+        @media (max-width: 850px) {
+            .main-nav { padding: 12px 15px; flex-wrap: wrap; justify-content: center; gap: 8px; }
+            .nav-left { width: 100%; justify-content: center; }
+            .nav-right { width: 100%; justify-content: center; gap: 8px; }
+            
+            /* Making the Purple Header much smaller */
+            .about-header { 
+                padding: 35px 15px !important; /* Half the height of desktop */
+            }
+
+            .about-header h1 { 
+                font-size: 1.7rem !important; /* Smaller text */
+                margin: 10px 0 !important;
+            }
+
+            .about-header p {
+                font-size: 0.8rem !important;
+                line-height: 1.4;
+                opacity: 0.9;
+            }
+
+            /* Swipe sideways stays the same */
+            .team-grid {
+                display: flex;
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
+                gap: 20px;
+                padding: 10px 5px 30px;
+                -webkit-overflow-scrolling: touch;
+            }
+            .team-grid::-webkit-scrollbar { display: none; }
+            .team-card { min-width: 260px; flex: 0 0 260px; scroll-snap-align: center; }
+            .image-wrapper { height: 300px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="main-nav">
+        <div class="nav-left">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="40" height="40" style="filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.1));">
+                        <path d="M50 10 L15 25 L15 55 C15 75 50 95 50 95 C50 95 85 75 85 55 L85 25 Z" fill="#8a388a" />
+                        <path d="M35 45 C35 35 45 35 55 38 L58 32 L65 40 C75 45 75 60 75 60 L68 60 C65 55 60 55 55 55 L45 55 C40 55 35 50 35 45 Z" fill="#ffffff" opacity="0.9" />
+                        <circle cx="68" cy="52" r="2" fill="#8a388a" />
+                        <polyline points="10,60 25,60 35,40 50,75 65,55 90,55" fill="none" stroke="#2ed573" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="logo-text">SADS</div>
+            </div>
+            <a href="index.html" class="nav-home-btn">Home</a>
+        </div>
+
+        <div class="nav-right">
+            <div id="logged-out-ui" style="display: none; gap: 10px;">
+                <button class="btn-signin" onclick="location.href='login.html'">Login</button>
+                <button class="btn-join" onclick="location.href='Register.html'">Register</button>
+            </div>
+
+            <div id="logged-in-ui" style="display: none; align-items: center; gap: 10px;">
+                <span id="user-display" style="font-size: 0.75rem; font-weight: 600; color: var(--primary-purple);"></span>
+                <button class="btn-signin" style="color: #ff4d4d; border-color: #ff4d4d; padding: 5px 10px; font-size: 0.7rem;" onclick="handleLogout()">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <header class="about-header">
+        <span class="status-badge-mini">URS Morong Research</span>
+        <h1>Meet the Research Team</h1>
+        <p>Swipe sideways to see the members of our team.</p>
+    </header>
+
+    <section class="team-container">
+        <div class="team-grid">
+            <div class="team-card">
+                <div class="image-wrapper"><img src="bernett.png" alt="Bernett"></div>
+                <div class="member-detail">
+                    <h3>Bernett Buenaventura</h3>
+                    <p class="role">Research Lead</p>
+                    <p class="age">Age: 22</p>
+                </div>
+            </div>
+            <div class="team-card">
+                <div class="image-wrapper"><img src="neal.png" alt="Neal"></div>
+                <div class="member-detail">
+                    <h3>Francis Neal Valera</h3>
+                    <p class="role">Data Analyst</p>
+                    <p class="age">Age: 22</p>
+                </div>
+            </div>
+            <div class="team-card">
+                <div class="image-wrapper"><img src="James.webp" alt="James"></div>
+                <div class="member-detail">
+                    <h3>James Ernest Crisostomo</h3>
+                    <p class="role">Web Developer</p>
+                    <p class="age">Age: 22</p>
+                </div>
+            </div>
+            <div class="team-card">
+                <div class="image-wrapper"><img src="alan.jpg" alt="Alan"></div>
+                <div class="member-detail">
+                    <h3>Alan Czedrick Silvestre</h3>
+                    <p class="role">Data Annotator</p>
+                    <p class="age">Age: 22</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer style="text-align: center; padding: 30px 20px; color: #b2bec3; font-size: 0.8rem;">
+        <p>&copy; 2026 SADS Research Unit.</p>
+    </footer>
+
+    <script type="module">
+        import { supabase } from './supabaseClient.js';
+
+        async function initAuth() {
+            const { data: { session } } = await supabase.auth.getSession();
+            const loggedOutUI = document.getElementById('logged-out-ui');
+            const loggedInUI = document.getElementById('logged-in-ui');
+
+            if (session) {
+                loggedOutUI.style.display = 'none';
+                loggedInUI.style.display = 'flex';
+                const { data: profile } = await supabase.from('profiles').select('full_name').eq('id', session.user.id).maybeSingle();
+                document.getElementById('user-display').innerText = (profile && profile.full_name) ? profile.full_name : session.user.email;
+            } else {
+                loggedOutUI.style.display = 'flex';
+                loggedInUI.style.display = 'none';
+            }
+        }
+        initAuth();
+        window.handleLogout = async () => { await supabase.auth.signOut(); window.location.reload(); };
+    </script>
+</body>
+</html>

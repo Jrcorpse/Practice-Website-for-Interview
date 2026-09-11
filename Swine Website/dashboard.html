@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Surveillance Dashboard | SADS Master</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        /* --- CORE STYLES --- */
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: 'Poppins', sans-serif; background: #f8f9fa; overflow-x: hidden; width: 100%; }
+        .main-nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
+        .nav-right { display: flex; align-items: center; gap: 15px; }
+        .dashboard-hero { background: #8a388a; color: white; padding: 40px 20px; display: flex; flex-direction: column; align-items: flex-start; }
+        .dashboard-hero h1 { font-size: 2.2rem; margin: 0; font-weight: 700; }
+        .status-badge-live { display: inline-block !important; width: fit-content; background: #2ed573; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; margin-bottom: 10px; text-transform: uppercase; animation: pulse-green 2s infinite; }
+        
+        @keyframes pulse-green { 0% { box-shadow: 0 0 0 0px rgba(46, 213, 115, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(46, 213, 115, 0); } 100% { box-shadow: 0 0 0 0px rgba(46, 213, 115, 0); } }
+        
+        .capabilities-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 20px; }
+        .dashboard-layout { display: grid; grid-template-columns: 1fr 1.5fr 0.8fr; gap: 20px; padding: 0 20px 40px; align-items: stretch; width: 100%; }
+        .table-container, .chart-container, .log-panel, .cap-card { background: white; border-radius: 24px; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.02); display: flex; flex-direction: column; width: 100%; }
+        .chart-box { width: 100%; height: 350px; margin-top: 15px; }
+        
+        .table-wrapper { width: 100%; max-height: 500px; overflow-y: auto; overflow-x: auto; margin-top: 15px; border: 1px solid #f0f0f0; border-radius: 12px; position: relative; }
+        thead th { position: sticky; top: 0; background: #fafafa; z-index: 10; box-shadow: inset 0 -2px 0 #f0f0f0; }
+        table { width: 100%; border-collapse: collapse; min-width: 750px; }
+        th { text-align: left; padding: 15px 10px; font-size: 0.7rem; color: #7f8c8d; text-transform: uppercase; }
+        td { padding: 15px 10px; border-bottom: 1px solid #f2f2f2; font-size: 0.85rem; vertical-align: middle; }
+
+        .switch { position: relative; display: inline-block; width: 38px; height: 20px; vertical-align: middle; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ddd; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #2ed573; }
+        input:checked + .slider:before { transform: translateX(18px); }
+        .resolved-row { opacity: 0.4; background-color: #f8f9fa !important; }
+
+        .log-panel { background: #2d3436; color: #dfe6e9; height: 500px; }
+        #log-container { flex-grow: 1; overflow-y: auto; }
+        .log-entry { margin: 8px 0; font-size: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 6px; }
+
+        @media (max-width: 850px) {
+            .main-nav { flex-direction: column !important; padding: 20px 10px !important; gap: 15px !important; text-align: center; }
+            .nav-right { flex-direction: column !important; width: 100% !important; gap: 10px !important; }
+            #user-display { border-bottom: 1px solid #eee; width: 100%; padding-bottom: 10px; margin: 0 !important; font-size: 1rem; }
+            .btn-row { display: flex; gap: 10px; width: 100%; justify-content: center; }
+            .dashboard-layout { grid-template-columns: 1fr !important; padding: 10px !important; width: 100% !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="sound-warning" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
+    <audio id="sound-critical" src="https://assets.mixkit.co/active_storage/sfx/951/951-preview.mp3" preload="auto"></audio>
+    <div id="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 10000;"></div>
+
+    <nav class="main-nav">
+        <div class="nav-left">
+            <div class="logo">
+                <div class="logo-text">SADS</div>
+            </div>
+            <a href="index.html" style="text-decoration:none; padding: 8px 18px; border-radius: 25px; background: rgba(138,56,138,0.05); color: #8a388a; font-weight:700; font-size:0.8rem; margin-left: 15px;">Home</a>
+        </div>
+        <div class="nav-right">
+            <span id="user-display" style="font-weight: 700; color: #8a388a;">User</span>
+            <div class="btn-row">
+                <button class="btn-signin" style="font-size: 0.75rem; padding: 10px 15px;" onclick="requestNotificationPermission()">🔔 Alerts</button>
+                <button onclick="handleLogout()" style="color: #ff4d4d; border: 1px solid #ff4d4d; background: none; padding: 10px 15px; border-radius: 8px; font-weight: 700; cursor: pointer;">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <header class="dashboard-hero">
+        <span class="status-badge-live">Live Feed: Active</span>
+        <h1>Farm Surveillance</h1>
+    </header>
+
+    <main>
+        <div class="capabilities-grid">
+            <div class="cap-card" style="border-left: 5px solid #28a745;"><h4 style="margin:0; color: #7f8c8d; font-size: 0.65rem;">ACTIVE BATCHES</h4><span id="total-batches" style="font-size: 2rem; font-weight: 800; display:block;">0</span></div>
+            <div class="cap-card" style="border-left: 5px solid #ffa502;"><h4 style="margin:0; color: #7f8c8d; font-size: 0.65rem;">AVG. TEMP</h4><span id="avg-temp" style="font-size: 2rem; font-weight: 800; display:block;">--°C</span></div>
+            <div class="cap-card" style="border-left: 5px solid #ff4d4d;"><h4 style="margin:0; color: #7f8c8d; font-size: 0.65rem;">HEALTH ALERTS</h4><span id="health-alerts" style="color: #ff4d4d; font-size: 2rem; font-weight: 800; display:block;">0</span></div>
+        </div>
+
+        <div class="dashboard-layout">
+            <div class="chart-container"><h3 style="margin: 0; color: #8a388a; font-size: 1.1rem; font-weight: 700;">Health Trends</h3><div class="chart-box"><canvas id="healthChart"></canvas></div></div>
+            <div class="table-container"><h3 style="margin: 0; color: #8a388a; font-size: 1.1rem; font-weight: 700;">Livestock Tracking</h3><div class="table-wrapper"><table><thead><tr><th>TIME</th><th>TEMP</th><th>HUDDLE</th><th>BLOATING</th><th>STATUS</th><th>RESOLVE</th></tr></thead><tbody id="batch-table-body"></tbody></table></div></div>
+            <div class="log-panel"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;"><h3 style="margin: 0; color: #dfe6e9; font-size: 0.9rem;">Logs</h3><button onclick="clearLogs()" style="padding: 4px 10px; font-size: 0.7rem; background: #4a5568; color: white; border: none; border-radius: 6px; cursor: pointer;">Clear</button></div><div id="log-container"></div></div>
+        </div>
+    </main>
+
+<script type="module">
+    import { supabase, researchSupabase } from './supabaseClient.js';
+
+    let healthChart;
+    let currentUserFullName = "User";
+
+    // --- NEW: THE AUDIO ENGINE ---
+    function triggerAudioAlert(type) {
+        const sound = document.getElementById(type === 'critical' ? 'sound-critical' : 'sound-warning');
+        if (sound) {
+            sound.currentTime = 0; // Reset to start
+            sound.play().catch(e => {
+                console.warn("Audio blocked by browser. Click anywhere on the dashboard to enable alerts.");
+            });
+        }
+    }
+
+    window.toggleEvidence = (rowId) => {
+        const row = document.getElementById(rowId);
+        if (row) row.style.display = (row.style.display === 'none') ? 'table-row' : 'none';
+    };
+
+    window.handleToggleResolve = async (id, currentStatus, timeLabel) => {
+        try {
+            const newState = !currentStatus;
+            const updateData = { 
+                is_resolved: newState,
+                resolved_by: currentUserFullName,
+                resolved_at: newState ? new Date().toISOString() : null
+            };
+
+            const { error } = await researchSupabase.from('RPI_Data').update(updateData).eq('id', id);
+            if (!error) { await fetchDashboard(); }
+        } catch (err) { console.error("Database Update Error:", err); }
+    };
+
+    function addLogEntry(message, type = 'info', timestamp = null) {
+        const container = document.getElementById('log-container');
+        if(!container) return;
+        const entry = document.createElement('p'); entry.className = 'log-entry';
+        if (type === 'critical' || type === 'critical') entry.style.color = '#ff4d4d';
+        else if (type === 'warning' || type === 'warning') entry.style.color = '#ffa502';
+        else if (type === 'success') entry.style.color = '#2ed573';
+        const logTime = timestamp ? new Date(timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        entry.innerText = `[${logTime}] ${message}`;
+        container.prepend(entry);
+    }
+
+    function initChart() {
+        const ctx = document.getElementById('healthChart').getContext('2d');
+        healthChart = new Chart(ctx, {
+            type: 'line',
+            data: { labels: [], datasets: [{ label: 'Temp', data: [], borderColor: '#ffa502', borderWidth: 2, tension: 0.4, yAxisID: 'y' }, { label: 'Severity', data: [], borderColor: '#8a388a', borderWidth: 2, tension: 0.4, yAxisID: 'y1' }] },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { type: 'linear', position: 'left' }, y1: { type: 'linear', position: 'right', grid: { drawOnChartArea: false } } } }
+        });
+    }
+
+    async function fetchDashboard() {
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+
+            const { data: sensorData, error } = await researchSupabase
+                .from('RPI_Data')
+                .select('*')
+                .eq('farmer_id', user.id) 
+                .order('created_at', { ascending: false })
+                .limit(15);
+
+            if (error) throw error;
+
+            const tableBody = document.getElementById('batch-table-body');
+            const logContainer = document.getElementById('log-container');
+            tableBody.innerHTML = '';
+            logContainer.innerHTML = ''; 
+            
+            const labels = [], chartTemp = [], chartSev = [];
+            let logItems = []; 
+
+            [...sensorData].reverse().forEach((item, index) => {
+                const time = new Date(item.created_at).toLocaleTimeString([], {hour: 'numeric', minute:'2-digit', hour12: true});
+                labels.push(new Date(item.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}));
+                chartTemp.push(item.temperature); chartSev.push(item.severity_score);
+
+                const color = item.severity_score > 70 ? '#ff4d4d' : (item.severity_score > 30 ? '#ffa502' : '#2ed573');
+                const label = item.severity_score > 70 ? 'CRITICAL' : (item.severity_score > 30 ? 'WARNING' : 'NORMAL');
+                const resolved = item.is_resolved === true; 
+                
+                const rowId = `row-${index}`;
+                tableBody.innerHTML = `
+                    <tr class="${resolved ? 'resolved-row' : ''}" onclick="toggleEvidence('${rowId}')" style="cursor:pointer">
+                        <td>${time}</td>
+                        <td>${item.temperature.toFixed(1)}°</td>
+                        <td>${(item.huddling_score || 0).toFixed(2)}</td>
+                        <td>${(item.bloating_score || 0).toFixed(2)}</td>
+                        <td style="color:${color}; font-weight:700;">● ${label}</td>
+                        <td onclick="event.stopPropagation()">
+                            <label class="switch">
+                                <input type="checkbox" ${resolved ? 'checked' : ''} onchange="handleToggleResolve('${item.id}', ${resolved}, '${time}')">
+                                <span class="slider"></span>
+                            </label>
+                        </td>
+                    </tr>
+                    <tr id="${rowId}" style="display: none; background: #fafafa;">
+                        <td colspan="6" style="text-align: center; padding: 20px;">
+                            <img src="${item.image_url || 'https://via.placeholder.com/400x200'}" style="width:100%; max-width:350px; border-radius:15px; border: 2px solid #eee;">
+                        </td>
+                    </tr>` + tableBody.innerHTML;
+
+                if (item.severity_score >= 31) {
+                    logItems.push({ time: item.created_at, msg: `${label}: Detected at ${item.severity_score.toFixed(0)}%`, type: label.toLowerCase() });
+                }
+                if (resolved && item.resolved_at) {
+                    logItems.push({ time: item.resolved_at, msg: `RESOLVED: Case from ${time} marked by ${item.resolved_by || 'User'}.`, type: 'success' });
+                }
+            });
+
+            logItems.sort((a, b) => new Date(a.time) - new Date(b.time));
+            logItems.forEach(log => addLogEntry(log.msg, log.type, log.time));
+
+            healthChart.data.labels = labels; healthChart.data.datasets[0].data = chartTemp; healthChart.data.datasets[1].data = chartSev; healthChart.update();
+            
+            const { count: alertsCount } = await researchSupabase
+                .from('RPI_Data').select('*', { count: 'exact', head: true })
+                .eq('farmer_id', user.id)
+                .gte('severity_score', 31).eq('is_resolved', false);
+
+            document.getElementById('health-alerts').innerText = alertsCount || 0;
+            document.getElementById('total-batches').innerText = "1";
+            document.getElementById('avg-temp').innerText = (chartTemp.length > 0) ? (chartTemp.reduce((a,b)=>a+b,0)/chartTemp.length).toFixed(1) + "°C" : "--°C";
+
+        } catch (err) { console.error("Sync Error:", err); }
+    }
+
+    async function loadUserDisplay() {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+            const { data: profile } = await supabase.from('profiles').select('full_name').eq('id', user.id).single();
+            currentUserFullName = profile?.full_name || user.email;
+            document.getElementById('user-display').innerText = currentUserFullName;
+        }
+    }
+
+    window.handleLogout = async () => { await supabase.auth.signOut(); window.location.href = 'login.html'; };
+    window.clearLogs = () => { document.getElementById('log-container').innerHTML = ''; };
+    window.requestNotificationPermission = async () => { await Notification.requestPermission(); };
+
+    // --- UPDATED: REALTIME ALERT LOGIC ---
+    researchSupabase.channel('live')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'RPI_Data' }, async (payload) => {
+            const { data: { user } } = await supabase.auth.getUser();
+            const newData = payload.new;
+
+            // Only alert if the data belongs to the logged-in farmer
+            if (user && newData.farmer_id === user.id) {
+                if (newData.severity_score > 70) {
+                    triggerAudioAlert('critical');
+                } else if (newData.severity_score > 30) {
+                    triggerAudioAlert('warning');
+                }
+                fetchDashboard(); 
+            }
+        })
+        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'RPI_Data' }, () => fetchDashboard())
+        .subscribe();
+
+    initChart(); loadUserDisplay(); fetchDashboard();
+</script>
+</body>
+</html>

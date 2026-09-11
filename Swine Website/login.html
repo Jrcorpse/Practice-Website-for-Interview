@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | SADS Portal</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-purple: #8a388a;
+            --text-muted: #7f8c8d;
+            --danger-red: #ff4d4d;
+            --font-main: 'Poppins', sans-serif;
+        }
+
+        /* Force consistent font */
+        * { 
+            box-sizing: border-box; 
+            transition: all 0.3s ease; 
+            font-family: var(--font-main) !important; 
+        }
+
+        body.login-body {
+            /* Matched to your gradient theme */
+            background: linear-gradient(135deg, #4b1a4b 0%, #2d102d 100%);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Navigation Styling (Matched to white header) */
+        .main-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            background: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: sticky; top: 0; z-index: 1000;
+        }
+
+        .logo { display: flex; align-items: center; gap: 10px; }
+        .logo-text { font-weight: 800; color: var(--primary-purple); font-size: 1.2rem; letter-spacing: 1px; }
+
+        .login-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+        }
+
+        .login-header h2 {
+            margin: 10px 0 5px;
+            color: #2d3436;
+            font-weight: 700;
+        }
+
+        /* Form Styling */
+        .input-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #444;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            font-family: inherit;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+            font-size: 0.9rem;
+            background-color: #fff;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary-purple);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary-purple);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.3s;
+        }
+
+        .btn-login:hover {
+            background-color: #722d72;
+            transform: translateY(-2px);
+        }
+
+        .btn-login:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            color: var(--danger-red);
+            background: rgba(255, 77, 77, 0.1);
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+            display: none; 
+            border: 1px solid rgba(255, 77, 77, 0.2);
+        }
+
+        @media (max-width: 600px) {
+            .main-nav { padding: 10px 20px; flex-direction: column; gap: 8px; }
+            .login-box { padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body class="login-body">
+
+    <nav class="main-nav">
+        <div class="nav-left">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="40" height="40" style="filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.1));">
+                        <path d="M50 10 L15 25 L15 55 C15 75 50 95 50 95 C50 95 85 75 85 55 L85 25 Z" fill="#8a388a" />
+                        <path d="M35 45 C35 35 45 35 55 38 L58 32 L65 40 C75 45 75 60 75 60 L68 60 C65 55 60 55 55 55 L45 55 C40 55 35 50 35 45 Z" fill="#ffffff" opacity="0.9" />
+                        <circle cx="68" cy="52" r="2" fill="#8a388a" />
+                        <polyline points="10,60 25,60 35,40 50,75 65,55 90,55" fill="none" stroke="#2ed573" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="logo-text">SADS</div>
+            </div>
+        </div>
+        <div class="nav-right">
+            <button onclick="location.href='Register.html'" style="padding: 6px 16px; border-radius: 20px; border: 2px solid var(--primary-purple); background: none; color: var(--primary-purple); font-weight: 600; cursor: pointer;">Register Farm</button>
+        </div>
+    </nav>
+
+    <div class="login-container">
+        <div class="login-box" style="max-width: 450px;">
+            <div class="login-header">
+                <div style="margin-bottom: 10px; display: flex; justify-content: center;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="80" height="80" style="filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.1));">
+                        <path d="M50 10 L15 25 L15 55 C15 75 50 95 50 95 C50 95 85 75 85 55 L85 25 Z" fill="#8a388a" />
+                        <path d="M35 45 C35 35 45 35 55 38 L58 32 L65 40 C75 45 75 60 75 60 L68 60 C65 55 60 55 55 55 L45 55 C40 55 35 50 35 45 Z" fill="#ffffff" opacity="0.9" />
+                        <circle cx="68" cy="52" r="2" fill="#8a388a" />
+                        <polyline points="10,60 25,60 35,40 50,75 65,55 90,55" fill="none" stroke="#2ed573" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h2>SADS Portal</h2>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">Authorized Personnel Access Only</p>
+            </div>
+
+            <div id="errorAlert" class="error-message"></div>
+            
+            <form id="loginForm">
+                <div class="input-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" placeholder="officer@sads.com" required>
+                </div>
+
+                <div class="input-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <label for="password">Password</label>
+                        <a href="#" style="font-size: 0.75rem; color: var(--primary-purple); text-decoration: none; margin-bottom: 8px;">Forgot password?</a>
+                    </div>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" id="submitBtn" class="btn-login">Sign In</button>
+                
+                <p style="margin-top: 25px; font-size: 0.85rem; color: var(--text-muted);">
+                    Don't have an account? <a href="Register.html" style="color: var(--primary-purple); font-weight: 700; text-decoration: none;">Request Access</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+    import { supabase } from './supabaseClient.js';
+
+    // Helper: Logs the entry to the system_logs table
+    async function recordLoginEntry(user) {
+        try {
+            // 1. Fetch the user's name and role from the profiles table
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('full_name, role')
+                .eq('id', user.id)
+                .single();
+
+            const displayName = profile?.full_name || user.email;
+            const userRole = profile?.role || 'user';
+
+            // 2. Insert the activity log
+            await supabase.from('system_logs').insert([{
+                event_type: 'LOGIN',
+                user_name: displayName,
+                details: `${userRole.toUpperCase()} has entered the portal.`
+            }]);
+        } catch (logError) {
+            console.error("Failed to record login activity:", logError);
+            // We don't throw this error so the user can still log in even if logging fails
+        }
+    }
+
+    async function checkSession() {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) window.location.href = 'index.html';
+    }
+    checkSession();
+
+    const form = document.getElementById('loginForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const errorAlert = document.getElementById('errorAlert');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errorAlert.style.display = 'none';
+        submitBtn.innerText = "Verifying...";
+        submitBtn.disabled = true;
+
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        try {
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: password,
+            });
+
+            if (error) throw error;
+
+            if (data.user) {
+                // Trigger the activity log before leaving the page
+                await recordLoginEntry(data.user);
+                window.location.href = 'index.html';
+            }
+        } catch (err) {
+            errorAlert.innerText = "Login Failed: " + err.message;
+            errorAlert.style.display = 'block';
+            submitBtn.innerText = "Sign In";
+            submitBtn.disabled = false;
+        }
+    });
+</script>
+</body>
+</html>
